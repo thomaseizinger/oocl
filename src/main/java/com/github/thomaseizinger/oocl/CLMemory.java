@@ -2,13 +2,10 @@ package com.github.thomaseizinger.oocl;
 
 import static org.jocl.CL.clReleaseMemObject;
 
-import java.io.Closeable;
-import java.io.IOException;
-
 import org.jocl.Pointer;
 import org.jocl.cl_mem;
 
-public class CLMemory<T> implements Closeable {
+public class CLMemory<T> implements AutoCloseable {
 
     private final cl_mem memory;
     private final Pointer pointer;
@@ -40,7 +37,7 @@ public class CLMemory<T> implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() throws Exception {
         clReleaseMemObject(memory);
     }
 }

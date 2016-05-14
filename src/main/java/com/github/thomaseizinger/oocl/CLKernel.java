@@ -4,14 +4,11 @@ import static org.jocl.CL.clCreateKernel;
 import static org.jocl.CL.clReleaseKernel;
 import static org.jocl.CL.clSetKernelArg;
 
-import java.io.Closeable;
-import java.io.IOException;
-
 import org.jocl.Pointer;
 import org.jocl.Sizeof;
 import org.jocl.cl_kernel;
 
-public class CLKernel implements Closeable {
+public class CLKernel implements AutoCloseable {
 
     private final cl_kernel kernel;
     private final String kernelName;
@@ -54,7 +51,7 @@ public class CLKernel implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() throws Exception {
         clReleaseKernel(kernel);
     }
 }

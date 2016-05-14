@@ -5,7 +5,6 @@ import static org.jocl.CL.clCreateCommandQueue;
 import static org.jocl.CL.clCreateProgramWithSource;
 import static org.jocl.CL.clReleaseContext;
 
-import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.UncheckedIOException;
@@ -20,7 +19,7 @@ import org.jocl.cl_context;
 import org.jocl.cl_mem;
 import org.jocl.cl_program;
 
-public class CLContext implements Closeable {
+public class CLContext implements AutoCloseable {
 
     private final cl_context context;
     private final CLDevice device;
@@ -123,7 +122,7 @@ public class CLContext implements Closeable {
     }
 
     @Override
-    public void close() throws IOException {
+    public void close() throws Exception {
         clReleaseContext(context);
     }
 }
