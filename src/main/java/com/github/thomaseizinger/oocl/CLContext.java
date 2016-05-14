@@ -1,16 +1,26 @@
 package com.github.thomaseizinger.oocl;
 
-import org.jocl.*;
+import static org.jocl.CL.clCreateBuffer;
+import static org.jocl.CL.clCreateCommandQueue;
+import static org.jocl.CL.clCreateProgramWithSource;
+import static org.jocl.CL.clReleaseContext;
 
 import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.util.Arrays;
 
-import static org.jocl.CL.*;
+import org.jocl.Pointer;
+import org.jocl.Sizeof;
+import org.jocl.cl_command_queue;
+import org.jocl.cl_context;
+import org.jocl.cl_mem;
+import org.jocl.cl_program;
 
 public class CLContext implements Closeable {
+
     private final cl_context context;
     private final CLDevice device;
 
@@ -33,20 +43,22 @@ public class CLContext implements Closeable {
      * @throws IOException
      */
     public CLProgram createProgram(final File... file) throws IOException {
-        final String[] programms = Arrays.stream(file).map(f -> {
+        final String[] programs = Arrays.stream(file).map(f -> {
             try {
-                return Files.readAllLines(f.toPath()).stream().reduce("", (accu, l) -> accu + l + System.lineSeparator());
-            } catch (Exception e) {
-                e.printStackTrace();
+                return Files
+                        .lines(f.toPath())
+                        .reduce("", (accu, l) -> accu + l + System.lineSeparator());
+            } catch (IOException e) {
+                throw new UncheckedIOException(e);
             }
-            return null;
         }).toArray(String[]::new);
 
-        return createProgram(programms);
+        return createProgram(programs);
     }
 
     /**
-     * Returns the kernel from the given program file. This method automatically loads and builds the program and returns the kernel.
+     * Returns the kernel from the given program file. This method automatically loads and builds the program and
+     * returns the kernel.
      *
      * @param file
      * @param kernel
@@ -59,10 +71,8 @@ public class CLContext implements Closeable {
             program.build(options);
             return program.createKernel(kernel);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new UncheckedIOException(e);
         }
-
-        return null;
     }
 
     /**
@@ -78,11 +88,6 @@ public class CLContext implements Closeable {
         return new CLProgram(program);
     }
 
-    public CLMemory<Void> createFromGLBuffer(long flags, int vbo) {
-        final cl_mem mem = clCreateFromGLBuffer(context, CL_MEM_WRITE_ONLY, vbo, null);
-        return new CLMemory<Void>(mem, -1, Pointer.to(mem), null);
-    }
-
     /**
      * Creates a buffer memory object from the given int array.
      *
@@ -91,17 +96,7 @@ public class CLContext implements Closeable {
      */
     public CLMemory<Void> createEmptyBuffer(final long flags, int size) {
         final cl_mem mem = clCreateBuffer(context, flags, size, null, null);
-        return new CLMemory<Void>(mem, Sizeof.cl_mem, Pointer.to(mem), null);
-    }
-
-    /**
-     * Creates a buffer memory object from the given vbo.
-     *
-     * @param flags
-     * @return
-     */
-    public CLMemory<int[]> createBufferFromGLBuffer(final long flags, int vbo) {
-        return null;
+        return new CLMemory<>(mem, Sizeof.cl_mem, Pointer.to(mem), null);
     }
 
     /**
@@ -114,7 +109,7 @@ public class CLContext implements Closeable {
     public CLMemory<int[]> createBuffer(final long flags, final int[] data) {
         final Pointer pointer = Pointer.to(data);
         final cl_mem mem = clCreateBuffer(context, flags, Sizeof.cl_int * data.length, pointer, null);
-        return new CLMemory<int[]>(mem, Sizeof.cl_int * data.length, pointer, data);
+        return new CLMemory<>(mem, Sizeof.cl_int * data.length, pointer, data);
     }
 
     /**
@@ -127,7 +122,7 @@ public class CLContext implements Closeable {
     public CLMemory<long[]> createBuffer(final long flags, final long[] data) {
         final Pointer pointer = Pointer.to(data);
         final cl_mem mem = clCreateBuffer(context, flags, Sizeof.cl_ulong * data.length, pointer, null);
-        return new CLMemory<long[]>(mem, Sizeof.cl_ulong * data.length, pointer, data);
+        return new CLMemory<>(mem, Sizeof.cl_ulong * data.length, pointer, data);
     }
 
     /**
@@ -140,7 +135,7 @@ public class CLContext implements Closeable {
     public CLMemory<float[]> createBuffer(long flags, float[] data) {
         final Pointer pointer = Pointer.to(data);
         final cl_mem mem = clCreateBuffer(context, flags, Sizeof.cl_float * data.length, pointer, null);
-        return new CLMemory<float[]>(mem, Sizeof.cl_float * data.length, pointer, data);
+        return new CLMemory<>(mem, Sizeof.cl_float * data.length, pointer, data);
 
     }
 

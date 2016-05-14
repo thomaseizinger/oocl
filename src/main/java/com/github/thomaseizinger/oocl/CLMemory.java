@@ -42,9 +42,4 @@ public class CLMemory<T> implements Closeable {
     public void close() throws IOException {
         clReleaseMemObject(memory);
     }
-
-    public void release() {
-        clReleaseMemObject(memory);
-        memory = null;
-    }
 }
