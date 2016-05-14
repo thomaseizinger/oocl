@@ -60,11 +60,12 @@ public class CLPlatform implements Closeable {
      * exists.
      *
      * @param deviceType
-     * @param filter
+     * @param filters
      * @return
      */
-    public Optional<CLDevice> getDevice(DeviceType deviceType, Predicate<CLDevice> filter) {
-        return getDevices(deviceType).stream().filter(filter).findFirst();
+    public Optional<CLDevice> getDevice(DeviceType deviceType, Predicate<CLDevice>... filters) {
+        final Predicate<CLDevice> concatenated = Arrays.stream(filters).reduce((d) -> true, Predicate::and);
+        return getDevices(deviceType).stream().filter(concatenated).findFirst();
     }
 
     /**
