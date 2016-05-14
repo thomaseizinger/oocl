@@ -1,23 +1,21 @@
 package com.github.thomaseizinger.oocl;
 
-import org.jocl.cl_device_id;
-import org.jocl.cl_platform_id;
+import static com.github.thomaseizinger.oocl.CLDevice.DeviceType;
+import static org.jocl.CL.clGetDeviceIDs;
+import static org.jocl.CL.clGetPlatformIDs;
 
-import java.io.Closeable;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static com.github.thomaseizinger.oocl.CLDevice.DeviceType;
-import static org.jocl.CL.clGetDeviceIDs;
-import static org.jocl.CL.clGetPlatformIDs;
+import org.jocl.cl_device_id;
+import org.jocl.cl_platform_id;
 
-public class CLPlatform implements Closeable {
+public class CLPlatform {
 
-    private cl_platform_id platformId;
+    private final cl_platform_id platformId;
 
     private CLPlatform(cl_platform_id id) {
         this.platformId = id;
@@ -25,8 +23,6 @@ public class CLPlatform implements Closeable {
 
     /**
      * Returns the number of available platforms.
-     *
-     * @return
      */
     public static int getNumberOfPlatforms() {
         final int numPlatformsArray[] = new int[1];
@@ -36,17 +32,13 @@ public class CLPlatform implements Closeable {
 
     /**
      * Returns the first available platform or null if there are none.
-     *
-     * @return
      */
-    public static CLPlatform getFirst() {
-        return getPlatforms().stream().findFirst().orElse(null);
+    public static Optional<CLPlatform> getFirst() {
+        return getPlatforms().stream().findFirst();
     }
 
     /**
-     * Returns a {@link List} of all available opencl platforms.
-     *
-     * @return
+     * Returns a list of all available OpenCL platforms.
      */
     public static List<CLPlatform> getPlatforms() {
         final cl_platform_id platforms[] = new cl_platform_id[getNumberOfPlatforms()];
@@ -56,23 +48,16 @@ public class CLPlatform implements Closeable {
     }
 
     /**
-     * Returns the first device matching the given filter or null if none
-     * exists.
-     *
-     * @param deviceType
-     * @param filters
-     * @return
+     * Returns the first device matching the given filter.
      */
-    public Optional<CLDevice> getDevice(DeviceType deviceType, Predicate<CLDevice>... filters) {
+    @SafeVarargs
+    public final Optional<CLDevice> getDevice(DeviceType deviceType, Predicate<CLDevice>... filters) {
         final Predicate<CLDevice> concatenated = Arrays.stream(filters).reduce((d) -> true, Predicate::and);
         return getDevices(deviceType).stream().filter(concatenated).findFirst();
     }
 
     /**
      * Returns all devices associated with this platform.
-     *
-     * @param deviceType
-     * @return
      */
     public List<CLDevice> getDevices(DeviceType deviceType) {
         // Obtain the number of devices for the platform
@@ -90,9 +75,4 @@ public class CLPlatform implements Closeable {
     public cl_platform_id getPlatformId() {
         return platformId;
     }
-
-    @Override
-    public void close() throws IOException {
-    }
-
 }

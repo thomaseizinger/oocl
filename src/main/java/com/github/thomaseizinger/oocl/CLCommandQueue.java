@@ -1,15 +1,12 @@
 package com.github.thomaseizinger.oocl;
 
 import static org.jocl.CL.CL_TRUE;
-import static org.jocl.CL.clEnqueueAcquireGLObjects;
 import static org.jocl.CL.clEnqueueNDRangeKernel;
 import static org.jocl.CL.clEnqueueReadBuffer;
-import static org.jocl.CL.clEnqueueReleaseGLObjects;
 import static org.jocl.CL.clFinish;
 import static org.jocl.CL.clFlush;
 
 import org.jocl.cl_command_queue;
-import org.jocl.cl_mem;
 
 public class CLCommandQueue {
 
@@ -20,6 +17,9 @@ public class CLCommandQueue {
     }
 
     public void execute(CLKernel kernel, int dimensions, CLRange globalWorkSize, CLRange localWorkSize) {
+
+        // TODO add check for size of CLRange and given dimensions?
+
         clEnqueueNDRangeKernel(
                 queue,
                 kernel.getKernel(),
@@ -45,14 +45,6 @@ public class CLCommandQueue {
                 null,
                 null
         );
-    }
-
-    public void enqueAcquireGLObject(CLMemory<?> memory) {
-        clEnqueueAcquireGLObjects(queue, 1, new cl_mem[] {memory.getMemory()}, 0, null, null);
-    }
-
-    public void enqueueReleaseGLObject(CLMemory<?> memory) {
-        clEnqueueReleaseGLObjects(queue, 1, new cl_mem[] {memory.getMemory()}, 0, null, null);
     }
 
     public void flush() {

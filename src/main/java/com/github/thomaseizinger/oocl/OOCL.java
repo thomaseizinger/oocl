@@ -4,10 +4,7 @@ import org.jocl.CL;
 
 public final class OOCL {
 
-    private OOCL() { }
-
-    static {
-        enableExceptions();
+    private OOCL() {
     }
 
     public static void enableExceptions() {

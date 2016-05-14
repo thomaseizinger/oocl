@@ -1,18 +1,19 @@
 package com.github.thomaseizinger.oocl;
 
-import org.jocl.Pointer;
-import org.jocl.cl_mem;
+import static org.jocl.CL.clReleaseMemObject;
 
 import java.io.Closeable;
 import java.io.IOException;
 
-import static org.jocl.CL.clReleaseMemObject;
+import org.jocl.Pointer;
+import org.jocl.cl_mem;
 
 public class CLMemory<T> implements Closeable {
-    private cl_mem memory;
-    private Pointer pointer;
-    private long size;
-    private T data;
+
+    private final cl_mem memory;
+    private final Pointer pointer;
+    private final long size;
+    private final T data;
 
     public CLMemory(cl_mem memory, long size, Pointer pointer, T data) {
         super();
@@ -22,7 +23,7 @@ public class CLMemory<T> implements Closeable {
         this.data = data;
     }
 
-    /* default */Pointer getPointer() {
+    Pointer getPointer() {
         return pointer;
     }
 

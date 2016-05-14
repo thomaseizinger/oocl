@@ -12,6 +12,7 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.util.Arrays;
 
+import org.jocl.CL;
 import org.jocl.Pointer;
 import org.jocl.Sizeof;
 import org.jocl.cl_command_queue;
@@ -38,11 +39,9 @@ public class CLContext implements Closeable {
     /**
      * Creates a {@link CLProgram} from the given Files.
      *
-     * @param file
-     * @return
-     * @throws IOException
+     * @throws UncheckedIOException If there was a problem loading the given file.
      */
-    public CLProgram createProgram(final File... file) throws IOException {
+    public CLProgram createProgram(final File... file) {
         final String[] programs = Arrays.stream(file).map(f -> {
             try {
                 return Files
@@ -59,27 +58,15 @@ public class CLContext implements Closeable {
     /**
      * Returns the kernel from the given program file. This method automatically loads and builds the program and
      * returns the kernel.
-     *
-     * @param file
-     * @param kernel
-     * @param options
-     * @return
      */
     public CLKernel createKernel(File file, String kernel, CLProgram.BuildOption... options) {
-        try {
-            final CLProgram program = createProgram(file);
-            program.build(options);
-            return program.createKernel(kernel);
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
-        }
+        final CLProgram program = createProgram(file);
+        program.build(options);
+        return program.createKernel(kernel);
     }
 
     /**
      * Creates a program with the given sources.
-     *
-     * @param sources
-     * @return
      */
     public CLProgram createProgram(final String... sources) {
 
@@ -90,9 +77,7 @@ public class CLContext implements Closeable {
 
     /**
      * Creates a buffer memory object from the given int array.
-     *
-     * @param flags
-     * @return
+     * For a list of possible flags see {@link CL}.
      */
     public CLMemory<Void> createEmptyBuffer(final long flags, int size) {
         final cl_mem mem = clCreateBuffer(context, flags, size, null, null);
@@ -101,10 +86,7 @@ public class CLContext implements Closeable {
 
     /**
      * Creates a buffer memory object from the given int array.
-     *
-     * @param flags
-     * @param data
-     * @return
+     * For a list of possible flags see {@link CL}.
      */
     public CLMemory<int[]> createBuffer(final long flags, final int[] data) {
         final Pointer pointer = Pointer.to(data);
@@ -114,10 +96,7 @@ public class CLContext implements Closeable {
 
     /**
      * Creates a buffer memory object from the given long array.
-     *
-     * @param flags
-     * @param data
-     * @return
+     * For a list of possible flags see {@link CL}.
      */
     public CLMemory<long[]> createBuffer(final long flags, final long[] data) {
         final Pointer pointer = Pointer.to(data);
@@ -127,10 +106,7 @@ public class CLContext implements Closeable {
 
     /**
      * Creates a buffer memory object from the given float array.
-     *
-     * @param flags
-     * @param data
-     * @return
+     * For a list of possible flags see {@link CL}.
      */
     public CLMemory<float[]> createBuffer(long flags, float[] data) {
         final Pointer pointer = Pointer.to(data);
@@ -141,17 +117,13 @@ public class CLContext implements Closeable {
 
     /**
      * Returns the internal id.
-     *
-     * @return
      */
     public cl_context getContext() {
         return context;
-
     }
 
     @Override
     public void close() throws IOException {
         clReleaseContext(context);
     }
-
 }

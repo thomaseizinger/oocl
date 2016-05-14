@@ -11,6 +11,7 @@ public final class CLRange {
     public static CLRange of(long... dimensionSizes) {
         return new CLRange(dimensionSizes);
     }
+
     public long[] toArray() {
         return dimensionSizes;
     }

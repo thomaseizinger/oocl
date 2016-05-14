@@ -15,19 +15,16 @@ import org.jocl.cl_device_id;
 
 public class CLDevice {
 
-    private cl_device_id id;
-    private CLPlatform platform;
+    private final cl_device_id id;
+    private final CLPlatform platform;
 
     public CLDevice(cl_device_id id, CLPlatform platform) {
         this.id = id;
         this.platform = platform;
     }
 
-
     /**
      * Returns the OpenCL device version.
-     *
-     * @return the OpenCL device version.
      */
     public float getDeviceVersion() {
         final String deviceVersion = getDeviceInfoString(CL_DEVICE_VERSION);
@@ -37,22 +34,12 @@ public class CLDevice {
     }
 
     /**
-     * Returns the value of the device info parameter with the given name
-     *
-     * @param paramName The parameter name
-     * @return The value
+     * Returns the value of the device info parameter with the given name.
      */
     public long getLong(int paramName) {
         return getLongs(paramName, 1)[0];
     }
 
-    /**
-     * Returns the values of the device info parameter with the given name
-     *
-     * @param paramName The parameter name
-     * @param numValues The number of values
-     * @return The value
-     */
     private long[] getLongs(int paramName, int numValues) {
         long values[] = new long[numValues];
         clGetDeviceInfo(id, paramName, Sizeof.cl_long * numValues, Pointer.to(values), null);
@@ -61,9 +48,6 @@ public class CLDevice {
 
     /**
      * Returns the opencl device info string.
-     *
-     * @param param
-     * @return
      */
     public String getDeviceInfoString(int param) {
         long size[] = new long[1];
@@ -76,9 +60,7 @@ public class CLDevice {
     }
 
     /**
-     * Creates a new {@link CLContext}
-     *
-     * @return
+     * Creates a new {@link CLContext} using the given {@link cl_context_properties}.
      */
     public CLContext createContext(cl_context_properties contextProperties) {
         contextProperties.addProperty(CL_CONTEXT_PLATFORM, platform.getPlatformId());
@@ -89,9 +71,7 @@ public class CLDevice {
     }
 
     /**
-     * Creates a new {@link CLContext}
-     *
-     * @return
+     * Creates a new {@link CLContext}.
      */
     public CLContext createContext() {
         final cl_context_properties contextProperties = new cl_context_properties();
@@ -104,8 +84,6 @@ public class CLDevice {
 
     /**
      * Returns the internal id.
-     *
-     * @return
      */
     public cl_device_id getId() {
         return id;
@@ -117,14 +95,12 @@ public class CLDevice {
 
         private final long type;
 
-        private DeviceType(long type) {
+        DeviceType(long type) {
             this.type = type;
         }
 
         public long getType() {
             return type;
         }
-
     }
-
 }

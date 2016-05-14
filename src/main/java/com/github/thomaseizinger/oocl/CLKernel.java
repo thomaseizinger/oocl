@@ -1,17 +1,20 @@
 package com.github.thomaseizinger.oocl;
 
-import org.jocl.Pointer;
-import org.jocl.Sizeof;
-import org.jocl.cl_kernel;
+import static org.jocl.CL.clCreateKernel;
+import static org.jocl.CL.clReleaseKernel;
+import static org.jocl.CL.clSetKernelArg;
 
 import java.io.Closeable;
 import java.io.IOException;
 
-import static org.jocl.CL.*;
+import org.jocl.Pointer;
+import org.jocl.Sizeof;
+import org.jocl.cl_kernel;
 
 public class CLKernel implements Closeable {
-    private cl_kernel kernel;
-    private String kernelName;
+
+    private final cl_kernel kernel;
+    private final String kernelName;
 
     public CLKernel(cl_kernel kernel, String kernelName) {
         this.kernel = kernel;
@@ -20,10 +23,6 @@ public class CLKernel implements Closeable {
 
     /**
      * Creates a {@link CLKernel} from the given {@link CLProgram} with the given kernel name.
-     *
-     * @param program
-     * @param kernelName
-     * @return
      */
     public static CLKernel createKernel(CLProgram program, String kernelName) {
         cl_kernel kernel = clCreateKernel(program.getId(), kernelName, null);
@@ -32,9 +31,7 @@ public class CLKernel implements Closeable {
     }
 
     /**
-     * Sets the arguments of this kernel.
-     *
-     * @param memory
+     * Sets the arguments of this kernel. The arguments must be in order required by the kernel.
      */
     public void setArguments(CLMemory<?>... memory) {
         for (int memoryIndex = 0; memoryIndex < memory.length; ++memoryIndex) {
@@ -44,8 +41,6 @@ public class CLKernel implements Closeable {
 
     /**
      * Returns the internal kernel id.
-     *
-     * @return
      */
     public cl_kernel getKernel() {
         return kernel;
@@ -53,8 +48,6 @@ public class CLKernel implements Closeable {
 
     /**
      * Returns the name of the kernel.
-     *
-     * @return
      */
     public String getKernelName() {
         return kernelName;
