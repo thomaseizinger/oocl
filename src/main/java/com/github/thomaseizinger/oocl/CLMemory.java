@@ -2,6 +2,7 @@ package com.github.thomaseizinger.oocl;
 
 import static org.jocl.CL.clReleaseMemObject;
 
+import org.jocl.CLException;
 import org.jocl.Pointer;
 import org.jocl.cl_mem;
 
@@ -37,7 +38,7 @@ public class CLMemory<T> implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws CLException {
         clReleaseMemObject(memory);
     }
 }

@@ -4,6 +4,7 @@ import static org.jocl.CL.clCreateKernel;
 import static org.jocl.CL.clReleaseKernel;
 import static org.jocl.CL.clSetKernelArg;
 
+import org.jocl.CLException;
 import org.jocl.Pointer;
 import org.jocl.Sizeof;
 import org.jocl.cl_kernel;
@@ -51,7 +52,7 @@ public class CLKernel implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws CLException {
         clReleaseKernel(kernel);
     }
 }

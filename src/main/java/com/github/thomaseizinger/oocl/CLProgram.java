@@ -5,6 +5,7 @@ import static org.jocl.CL.clReleaseProgram;
 
 import java.util.Arrays;
 
+import org.jocl.CLException;
 import org.jocl.cl_program;
 
 public class CLProgram implements AutoCloseable {
@@ -53,7 +54,7 @@ public class CLProgram implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws CLException {
         clReleaseProgram(program);
     }
 

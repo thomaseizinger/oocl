@@ -12,6 +12,7 @@ import java.nio.file.Files;
 import java.util.Arrays;
 
 import org.jocl.CL;
+import org.jocl.CLException;
 import org.jocl.Pointer;
 import org.jocl.Sizeof;
 import org.jocl.cl_command_queue;
@@ -122,7 +123,7 @@ public class CLContext implements AutoCloseable {
     }
 
     @Override
-    public void close() throws Exception {
+    public void close() throws CLException {
         clReleaseContext(context);
     }
 }
