@@ -1,10 +1,20 @@
 package com.github.thomaseizinger.oocl;
 
-import org.jocl.*;
+import static org.jocl.CL.CL_CONTEXT_PLATFORM;
+import static org.jocl.CL.CL_DEVICE_TYPE_CPU;
+import static org.jocl.CL.CL_DEVICE_TYPE_GPU;
+import static org.jocl.CL.CL_DEVICE_VERSION;
+import static org.jocl.CL.clCreateContext;
+import static org.jocl.CL.clGetDeviceInfo;
 
-import static org.jocl.CL.*;
+import org.jocl.Pointer;
+import org.jocl.Sizeof;
+import org.jocl.cl_context;
+import org.jocl.cl_context_properties;
+import org.jocl.cl_device_id;
 
 public class CLDevice {
+
     private cl_device_id id;
     private CLPlatform platform;
 
@@ -73,7 +83,7 @@ public class CLDevice {
     public CLContext createContext(cl_context_properties contextProperties) {
         contextProperties.addProperty(CL_CONTEXT_PLATFORM, platform.getPlatformId());
 
-        final cl_context context = clCreateContext(contextProperties, 1, new cl_device_id[]{id}, null, null, null);
+        final cl_context context = clCreateContext(contextProperties, 1, new cl_device_id[] {id}, null, null, null);
 
         return new CLContext(context, this);
     }
@@ -87,7 +97,7 @@ public class CLDevice {
         final cl_context_properties contextProperties = new cl_context_properties();
         contextProperties.addProperty(CL_CONTEXT_PLATFORM, platform.getPlatformId());
 
-        final cl_context context = clCreateContext(contextProperties, 1, new cl_device_id[]{id}, null, null, null);
+        final cl_context context = clCreateContext(contextProperties, 1, new cl_device_id[] {id}, null, null, null);
 
         return new CLContext(context, this);
     }
@@ -102,7 +112,8 @@ public class CLDevice {
     }
 
     public enum DeviceType {
-        CPU(CL_DEVICE_TYPE_CPU), GPU(CL_DEVICE_TYPE_GPU);
+        CPU(CL_DEVICE_TYPE_CPU),
+        GPU(CL_DEVICE_TYPE_GPU);
 
         private final long type;
 
