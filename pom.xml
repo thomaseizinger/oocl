@@ -6,7 +6,7 @@
 
     <groupId>com.github.thomaseizinger</groupId>
     <artifactId>oocl</artifactId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
 
     <dependencies>
         <dependency>
