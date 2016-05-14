@@ -22,8 +22,6 @@ import static org.jocl.CL.CL_MEM_READ_ONLY;
 import static org.jocl.CL.CL_MEM_WRITE_ONLY;
 
 import java.io.File;
-import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -75,8 +73,6 @@ public class VectorAddition {
                     return resultBuffer.getData();
                 }
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
         }
     }
 
